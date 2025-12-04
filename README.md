@@ -30,9 +30,6 @@ It might be prone to not being able to detect certain cards.
 - More testing.
 - Devs of the game hopefully adding useful logs when acquiring cards so AI/OCR isn't needed.
 
-# Download (Windows)
-The download of the app zip is in https://github.com/lipey1/deepwoken-helper/blob/main/DeepwokenHelper.zip
-
 # Build (Windows)
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), use `uv python install 3.12`, `uv venv --python 3.12` and `uv sync` on the repository folder.\
 Finally you need to install [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki) and paste the folder to the home directory of this repository. Don't forget to rename the folder to `tesseract` after pasting it.

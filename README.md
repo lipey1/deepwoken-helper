@@ -1,7 +1,7 @@
 # Deepwoken Helper
 
 <div align="center">
-  <img src="https://github.com/lipey1/deepwoken-helper/assets/69093264/9039ed81-6bea-4725-a169-d0d2d799c248" alt="main window">
+  <img src="https://i.imgur.com/7uyTjBl.png" alt="main window">
   <p>
     Deepwoken Helper to help you choose your cards.
   </p>
@@ -17,8 +17,7 @@ This will show all the data of the cards so it can help you pick which card you 
 \
 It might be prone to not being able to detect certain cards.
 
-## Showcase
-https://github.com/lipey1/deepwoken-helper/assets/69093264/2ebfd1d8-cad2-4076-93e4-4674fcdaee81
+<!-- ## Showcase -->
 
 # Potential Enhancements
 - Overlay showing the card info on the cards themselfs ingame.

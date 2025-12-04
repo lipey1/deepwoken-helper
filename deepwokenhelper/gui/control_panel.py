@@ -725,7 +725,7 @@ class GithubWindow(QMessageBox):
     def accept(self):
         logger.info("Opening github...")
 
-        url = "https://github.com/lipey1/DeepwokenHelper"
+        url = "https://github.com/lipey1/deepwoken-helper"
         webbrowser.open(url)
         self.close()
 

@@ -1,7 +1,7 @@
 #define MyAppName "Deepwoken Helper"
 #define MyAppVersion "1.3.1"
 #define MyAppPublisher "lipey1"
-#define MyAppURL "https://github.com/lipey1/DeepwokenHelper"
+#define MyAppURL "https://github.com/lipey1/deepwoken-helper"
 #define MyAppExeName "Deepwoken Helper.exe"
 #define SourceRoot "E:\Coding\DeepwokenHelper"
 

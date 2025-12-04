@@ -40,7 +40,7 @@ class UpdateChecker(QThread):
         if not self.last_check_time or elapsed_time >= 24 * 3600:
             try:
                 response = requests.get(
-                    "https://api.github.com/repos/lipey1/DeepwokenHelper/releases/latest",
+                    "https://api.github.com/repos/lipey1/deepwoken-helper/releases/latest",
                     timeout=10,
                 )
                 latest_release = response.json()
@@ -89,7 +89,7 @@ class UpdateWindow(QMessageBox):
 
     def accept(self):
         logger.info("Opening github update link...")
-        url = "https://github.com/lipey1/DeepwokenHelper/releases/latest"
+        url = "https://github.com/lipey1/deepwoken-helper/releases/latest"
         webbrowser.open(url)
         self.close()
 

@@ -5,6 +5,7 @@ import subprocess
 import logging
 import webbrowser
 from enum import Enum
+from urllib.parse import quote
 
 
 from PyQt6.QtCore import *
@@ -84,7 +85,7 @@ class ControlPanel(QWidget):
         layout.addStretch(1)
         # layout.addItem(QSpacerItem(0, 0, hPolicy=QSizePolicy.Policy.Expanding))
 
-        tag = QLabel(f"<b>v{deepwokenhelper.__version__} @Tuxsuper</b>")
+        tag = QLabel(f"<b>v{deepwokenhelper.__version__} @lipey1</b>")
         tag.setStyleSheet("color: #000000; font-size: 12px;")
         tag.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         layout.addWidget(
@@ -224,49 +225,82 @@ class ControlPanel(QWidget):
 
         build_layout.addLayout(layout)
 
-        # Build Name
-        layout = QHBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
+        def make_meta_label(text: str) -> QLabel:
+            label = QLabel(text)
+            self.set_color(label, QPalette.ColorRole.WindowText)
+            label.setFixedWidth(80)
+            label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+            label.setStyleSheet("font-size: 13px; font-weight: 600;")
+            return label
 
-        title = QLabel("Build Name")
-        self.set_color(title, QPalette.ColorRole.WindowText)
-        title.setFixedWidth(80)
-        title.setStyleSheet("font-size: 15px; font-weight: 600;")
-        layout.addWidget(title, 1)
-
-        self.buildName = QLabel()
-        self.set_color(self.buildName, QPalette.ColorRole.WindowText)
-        self.buildName.setMinimumWidth(40)
-        self.buildName.setMaximumHeight(30)
-        self.buildName.setStyleSheet("""background-color: transparent;
+        def make_meta_value() -> QLabel:
+            value = QLabel()
+            self.set_color(value, QPalette.ColorRole.WindowText)
+            value.setMinimumWidth(0)
+            value.setMaximumHeight(24)
+            value.setAlignment(Qt.AlignmentFlag.AlignLeft)
+            value.setStyleSheet(
+                """background-color: transparent;
                                 border-radius: 5px;
                                 border: 1px solid rgba(0, 0, 0, .25);
-                                padding: 2px;""")
-        layout.addWidget(self.buildName, 5)
+                                padding: 1px 4px;"""
+            )
+            value.setSizePolicy(
+                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+            )
+            return value
 
-        build_layout.addLayout(layout)
+        # Build Name (full row)
+        row = QHBoxLayout()
+        row.setContentsMargins(0, 0, 0, 0)
+        row.addWidget(make_meta_label("Build Name"), 1)
+        self.buildName = make_meta_value()
+        row.addWidget(self.buildName, 5)
+        build_layout.addLayout(row)
 
-        # Author
-        layout = QHBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
+        # Author (full row)
+        row = QHBoxLayout()
+        row.setContentsMargins(0, 0, 0, 0)
+        row.addWidget(make_meta_label("Author"), 1)
+        self.buildAuthor = make_meta_value()
+        row.addWidget(self.buildAuthor, 5)
+        build_layout.addLayout(row)
 
-        title = QLabel("Author")
-        self.set_color(title, QPalette.ColorRole.WindowText)
-        title.setFixedWidth(80)
-        title.setStyleSheet("font-size: 15px; font-weight: 600;")
-        layout.addWidget(title, 1)
+        # Grid 3x2 for Race/Origin/Oath/Murmur/Bell/Outfit (labels em cima, valores embaixo)
+        grid_container = QWidget()
+        grid_layout = QGridLayout(grid_container)
+        grid_layout.setContentsMargins(0, 0, 0, 0)
+        grid_layout.setHorizontalSpacing(12)
+        grid_layout.setVerticalSpacing(2)
+        grid_layout.setColumnStretch(0, 1)
+        grid_layout.setColumnStretch(1, 1)
+        grid_layout.setColumnStretch(2, 1)
 
-        self.buildAuthor = QLabel()
-        self.set_color(self.buildAuthor, QPalette.ColorRole.WindowText)
-        self.buildAuthor.setMinimumWidth(40)
-        self.buildAuthor.setMaximumHeight(30)
-        self.buildAuthor.setStyleSheet("""background-color: transparent;
-                                border-radius: 5px;
-                                border: 1px solid rgba(0, 0, 0, .25);
-                                padding: 2px;""")
-        layout.addWidget(self.buildAuthor, 5)
+        def add_meta_to_grid(row_idx: int, col_idx: int, title_text: str) -> QLabel:
+            cell = QWidget()
+            cell_layout = QVBoxLayout(cell)
+            cell_layout.setContentsMargins(0, 0, 0, 0)
 
-        build_layout.addLayout(layout)
+            title = make_meta_label(title_text)
+            value = make_meta_value()
+
+            cell_layout.addWidget(title)
+            cell_layout.addWidget(value)
+
+            grid_layout.addWidget(cell, row_idx, col_idx)
+            return value
+
+        # primeira linha
+        self.buildRace = add_meta_to_grid(0, 0, "Race")
+        self.buildOrigin = add_meta_to_grid(0, 1, "Origin")
+        self.buildOath = add_meta_to_grid(0, 2, "Oath")
+
+        # segunda linha
+        self.buildMurmur = add_meta_to_grid(1, 0, "Murmur")
+        self.buildBell = add_meta_to_grid(1, 1, "Bell")
+        self.buildOutfit = add_meta_to_grid(1, 2, "Outfit")
+
+        build_layout.addWidget(grid_container)
 
         return build_widget
 
@@ -305,7 +339,7 @@ class ControlPanel(QWidget):
 
         self.helper.stop_loading_signal.emit()
 
-    def get_name_author(self):
+    def _get_build_header(self):
         name = ""
         author = ""
 
@@ -320,10 +354,35 @@ class ControlPanel(QWidget):
 
         return name, author
 
+    def _get_build_meta(self):
+        if not self.helper.data:
+            return {}
+
+        stats_data = getattr(self.helper.data, "stats", {})
+        meta_data = stats_data.get("meta", {}) if stats_data else {}
+
+        return {
+            "Race": meta_data.get("Race", ""),
+            "Origin": meta_data.get("Origin", ""),
+            "Oath": meta_data.get("Oath", ""),
+            "Murmur": meta_data.get("Murmur", ""),
+            "Bell": meta_data.get("Bell", ""),
+            "Outfit": meta_data.get("Outfit", ""),
+        }
+
     def update_build_values(self):
-        name, author = self.get_name_author()
+        name, author = self._get_build_header()
+        meta = self._get_build_meta()
+
         self.buildName.setText(str(name))
         self.buildAuthor.setText(str(author))
+
+        self.buildRace.setText(str(meta.get("Race", "")))
+        self.buildOrigin.setText(str(meta.get("Origin", "")))
+        self.buildOath.setText(str(meta.get("Oath", "")))
+        self.buildMurmur.setText(str(meta.get("Murmur", "")))
+        self.buildBell.setText(str(meta.get("Bell", "")))
+        self.buildOutfit.setText(str(meta.get("Outfit", "")))
 
     def save_builds(self):
         builds_values = [
@@ -618,8 +677,12 @@ class AddDialog(QDialog):
                     self.errorOccurred.emit("Build already loaded")
                     return
 
-                buildLink = f"https://api.deepwoken.co/build?id={buildId}"
+                proxy_prefix = "https://deepwoken.co/api/proxy?url="
+                inner_url = f"https://api.deepwoken.co/build?id={buildId}"
+                buildLink = f"{proxy_prefix}{quote(inner_url, safe='')}"
+                print(buildLink)
                 build = self.helper.getData(buildLink, True)
+                print(build)
 
                 if not build or isinstance(build, str):
                     self.errorOccurred.emit("Build not found or invalid")
@@ -662,7 +725,7 @@ class GithubWindow(QMessageBox):
     def accept(self):
         logger.info("Opening github...")
 
-        url = "https://github.com/Tuxsupa/DeepwokenHelper"
+        url = "https://github.com/lipey1/DeepwokenHelper"
         webbrowser.open(url)
         self.close()
 

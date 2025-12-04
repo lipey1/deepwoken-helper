@@ -33,7 +33,7 @@ class DeepwokenHelper(QMainWindow):
         self.stop_loading_signal.connect(self.stop_loading)
         self.errorSignal.connect(self.error_message)
 
-        self.settings = QSettings("Tuxsuper", "DeepwokenHelper")
+        self.settings = QSettings("lipey1", "DeepwokenHelper")
         self.read_settings()
 
         self.ocrThread = QThread()
@@ -167,20 +167,23 @@ class DeepwokenHelper(QMainWindow):
     def getData(self, url, noError=False):
         try:
             response = None
+            logger.info(f"Requesting URL: {url}")
             response = requests.get(url, timeout=10)
-
-            if response.status_code != 200:
-                raise requests.ConnectTimeout
-
+            response.raise_for_status()
             return response.json()
 
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
             error_code = "Unknown"
-            if response and response.status_code:
+            if getattr(e, "response", None) is not None:
+                error_code = e.response.status_code
+            elif response is not None and getattr(response, "status_code", None):
                 error_code = response.status_code
 
             if not noError:
-                logger.error(f"Failed to fetch the web page. Status code: {error_code}")
+                logger.error(
+                    f"Failed to fetch the web page. Status code: {error_code}",
+                    exc_info=True,
+                )
                 self.errorSignal.emit(
-                    f"""Failed to fetch the web page. Status code: {error_code}\nPlease check your internet connection and try again."""
+                    f"""Failed to fetch the web page.\nStatus code: {error_code}\nURL: {url}\nPlease check your internet connection and try again."""
                 )

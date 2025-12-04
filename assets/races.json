@@ -12,6 +12,7 @@
         "Capra",
         "Ganymede",
         "Tiran",
+        "Kiron",
         "Drakkard",
         "Lightborn"
     ],
@@ -65,6 +66,10 @@
             "Agility": 3,
             "Willpower": 2
         },
+        "Kiron": {
+            "Agility": 3,
+            "Intelligence": 2
+        },
         "Drakkard": {
             "Agility": 2,
             "Fortitude": 3
@@ -90,7 +95,8 @@
         "Capra": "INT, WIL",
         "Ganymede": "INT, WIL",
         "Tiran": "AGL, WIL",
+        "Kiron": "AGL, INT",
         "Drakkard": "AGL, FTD",
-        "Lightborn": "ALL but CHA"
+        "Lightborn": "ALL"
     }
 }

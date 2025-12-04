@@ -1,11 +1,11 @@
 # Deepwoken Helper
 
 <div align="center">
-  <img src="https://github.com/Tuxsupa/DeepwokenHelper/assets/69093264/9039ed81-6bea-4725-a169-d0d2d799c248" alt="main window">
+  <img src="https://github.com/lipey1/DeepwokenHelper/assets/69093264/9039ed81-6bea-4725-a169-d0d2d799c248" alt="main window">
   <p>
     Deepwoken Helper to help you choose your cards.
   </p>
-  <a href="https://github.com/Tuxsupa/DeepwokenHelper/releases"><img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/Tuxsupa/DeepwokenHelper/total?label=Downloads&color=green"></a>
+  <a href="https://github.com/lipey1/DeepwokenHelper/releases"><img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/lipey1/DeepwokenHelper/total?label=Downloads&color=green"></a>
 </div>
 
 # How does this work?
@@ -18,7 +18,7 @@ This will show all the data of the cards so it can help you pick which card you 
 It might be prone to not being able to detect certain cards.
 
 ## Showcase
-https://github.com/Tuxsupa/DeepwokenHelper/assets/69093264/2ebfd1d8-cad2-4076-93e4-4674fcdaee81
+https://github.com/lipey1/DeepwokenHelper/assets/69093264/2ebfd1d8-cad2-4076-93e4-4674fcdaee81
 
 # Potential Enhancements
 - Overlay showing the card info on the cards themselfs ingame.
@@ -38,14 +38,9 @@ Finally you need to install [Tesseract](https://github.com/UB-Mannheim/tesseract
 To build the application, I use [PyInstaller](https://pyinstaller.org/en/stable/installation.html).\
 Then, use this command on the repo's home directory for onedir output (You can use onefile but it's more susceptible to getting a false positive from a AV).
 ```
-python -m PyInstaller --noconfirm --onedir --noconsole --icon "./assets/icons/favicon.ico" --name "Deepwoken Helper"   "./deepwokenhelper/__main__.py"
+uv run python build.py
 ```
 Finally copy `assets` and `tesseract` folder into the output folder that has the new .exe.
-
-# Support
-If you really like this project, please consider making a small donation, it really helps and means a lot!
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/tuxsuper)
 
 # Special Thanks
 

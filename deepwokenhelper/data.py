@@ -1,6 +1,7 @@
 import re
 import json
 import logging
+from urllib.parse import quote
 
 
 logger = logging.getLogger("helper")
@@ -16,7 +17,11 @@ class DeepwokenData:
             return
 
         logger.info(f"Getting build data from build ID: {buildId}")
-        self.build = self.helper.getData(f"https://api.deepwoken.co/build?id={buildId}")
+        proxy_prefix = "https://deepwoken.co/api/proxy?url="
+        inner_build_url = f"https://api.deepwoken.co/build?id={buildId}"
+        self.build = self.helper.getData(
+            f"{proxy_prefix}{quote(inner_build_url, safe='')}"
+        )
 
         if not self.build:
             return
@@ -50,12 +55,14 @@ class DeepwokenData:
             racesJson["racesStats"][self.build["stats"]["meta"]["Race"]]
         )
 
-        self.all_talents = self.helper.getData(
-            "https://api.deepwoken.co/get?type=talent&name=all"
+        inner_all_url = "https://api.deepwoken.co/get?type=all"
+        all_cards = self.helper.getData(
+            f"{proxy_prefix}{quote(inner_all_url, safe='')}"
         )
-        self.all_mantras = self.helper.getData(
-            "https://api.deepwoken.co/get?type=mantra&name=all"
-        )
+
+        # New API returns both talents and mantras together
+        self.all_talents = all_cards.get("talents", {}) if all_cards else {}
+        self.all_mantras = all_cards.get("mantras", {}) if all_cards else {}
 
         if not self.all_talents or not self.all_mantras:
             return
